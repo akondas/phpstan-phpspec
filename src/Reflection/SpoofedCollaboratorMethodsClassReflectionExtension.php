@@ -28,6 +28,7 @@ final class SpoofedCollaboratorMethodsClassReflectionExtension implements Method
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
+        dump($methodName);
         return in_array(SpoofedCollaborator::class, array_map(function (ClassReflection $interface):string {
             return $interface->getName();
         }, $classReflection->getInterfaces()), true);
@@ -35,17 +36,16 @@ final class SpoofedCollaboratorMethodsClassReflectionExtension implements Method
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        $collaboratorClassName = (string) preg_replace('/Collaborator$/', '', SpoofedCollaboratorRegistry::getAlias($classReflection->getName()));
         $collaboratorReflection = $this->broker->getClass(Collaborator::class);
 
         if ($methodName === 'getWrappedObject') {
-            return new GetWrappedObjectMethodReflection($collaboratorReflection->getMethod($methodName, new OutOfClassScope()), $collaboratorClassName);
+            return new GetWrappedObjectMethodReflection($collaboratorReflection->getMethod($methodName, new OutOfClassScope()), $classReflection->getName());
         }
 
         if ($collaboratorReflection->hasMethod($methodName)) {
             return $collaboratorReflection->getMethod($methodName, new OutOfClassScope());
         }
 
-        return new CollaboratorMethodReflection($this->broker->getClass($collaboratorClassName)->getMethod($methodName, new OutOfClassScope()));
+        return new CollaboratorMethodReflection($this->broker->getClass($classReflection->getName())->getMethod($methodName, new OutOfClassScope()));
     }
 }

@@ -25,6 +25,13 @@ class FooSpec extends ObjectBehavior
         $int = $baz->getWrappedObject()->someInt();
         $this->getWrappedObject()->property;
 
+        $this->checkOtherThing($baz);
+
         $this->getIntFromBaz($bar)->shouldBe($int);
+    }
+
+    private function checkOtherThing(Baz $baz): void
+    {
+
     }
 }

@@ -36,9 +36,7 @@ final class SpoofedCollaboratorPropertiesClassReflectionExtension implements Pro
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
-        $collaboratorClassName = (string) preg_replace('/Collaborator$/', '', SpoofedCollaboratorRegistry::getAlias($classReflection->getName()));
-
-        return new CollaboratorPropertyReflection($this->broker->getClass($collaboratorClassName)->getProperty($propertyName, new OutOfClassScope()));
+        return new CollaboratorPropertyReflection($this->broker->getClass($classReflection->getName())->getProperty($propertyName, new OutOfClassScope()));
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
@@ -55,8 +53,6 @@ final class SpoofedCollaboratorPropertiesClassReflectionExtension implements Pro
             return $collaboratorReflection->getMethod($methodName, new OutOfClassScope());
         }
 
-        $collaboratorClassName = (string) preg_replace('/Collaborator$/', '', SpoofedCollaboratorRegistry::getAlias($classReflection->getName()));
-
-        return new CollaboratorMethodReflection($this->broker->getClass($collaboratorClassName)->getMethod($methodName, new OutOfClassScope()));
+        return new CollaboratorMethodReflection($this->broker->getClass($classReflection->getName())->getMethod($methodName, new OutOfClassScope()));
     }
 }
